@@ -2,46 +2,38 @@
 
 namespace App\Handlers;
 
-use App\Events\ChatEvents;
 use WebSocket\Connection;
+use WebSocket\Server;
+use WebSocket\Message\Text;
+use IOC\Websocket\Contracts\HandlerInterface;
 
-class ChatHandler
+class ChatHandler implements HandlerInterface
 {
-    protected $connections = [];
-
-    public function onConnect($connection) {
-        // Return true to accept the connection, false to reject
-        echo 'chat connection accepted: ' . $connection->getRemoteName() . "\n";
+    /**
+     * Handle incoming WebSocket connection
+     */
+    public function onConnect(Connection $connection): bool
+    {
+        // Accept all connections to /chat endpoint
         return true;
     }
 
-    public function onMessage($server, $connection, $payload) {
-        // Handle chat message
-        $response = json_encode([
+    /**
+     * Handle incoming WebSocket message
+     */
+    public function onMessage(Server $server, Connection $connection, mixed $payload): void
+    {
+        // Broadcast the message to all connected clients
+        $connections = $server->getConnections();
+        $message = json_encode([
             'event' => 'chat.message',
             'payload' => $payload
         ]);
         
-        // Broadcast message to all connected clients
-        $connection->getServer()->broadcast($response);
-    }
-
-    public function broadcast(string $message)
-    {
-        foreach ($this->connections as $connection) {
-            $connection->send($message);
+        foreach ($connections as $client) {
+            if ($client !== $connection) {
+                $client->send(new Text($message));
+            }
         }
-    }
-
-    public function addConnection(Connection $connection)
-    {
-        $this->connections[] = $connection;
-    }
-
-    public function removeConnection(Connection $connection)
-    {
-        $this->connections = array_filter($this->connections, function ($conn) use ($connection) {
-            return $conn !== $connection;
-        });
     }
 }

@@ -3,18 +3,21 @@ namespace IOC\Websocket;
 
 use WebSocket\Connection;
 use WebSocket\Server;
+use IOC\Websocket\Handlers\EventHandler;
+use IOC\Websocket\Router\Router;
 
 class Websocket {
     private Server $server;
-    private $eventHandler;
-    private $routes;
+    private EventHandler $eventHandler;
+    private Router $router;
 
-    public function __construct($port=80) {
-        $this->server = new \WebSocket\Server($port);
+    public function __construct(int $port=80) {
+        $this->server = new Server($port);
         $this->eventHandler = new EventHandler();
+        $this->router = new Router();
     }
 
-    public function start() {
+    public function start(): void {
         $this->server->onHandshake(function ($server, $connection) {
             $request = $connection->getHandshakeRequest();
             $path = $request->getUri()->getPath();
@@ -37,17 +40,13 @@ class Websocket {
         $this->server->start();
     }
 
-
-    private function handleConnect($path, $connection) {
-        echo 'ok nice to meet you: ' . $connection->getRemoteName() . "\n";
-        print_r($this->routes['connect'][$path]);
-        print_r($path);
-
-        if (!isset($this->routes['connect'][$path])) {
+    private function handleConnect($path, $connection): bool {
+        $handlers = $this->router->getConnectHandlers($path);
+        if (!$handlers) {
             return false;
         }
 
-        [$handler, $method] = $this->routes['connect'][$path];
+        [$handler, $method] = $handlers;
         if (class_exists($handler)) {
             $instance = new $handler();
             if (method_exists($instance, $method)) {
@@ -57,33 +56,31 @@ class Websocket {
         return false;
     }
 
-    private function handleMessage(Connection $connection, $message) {
+    private function handleMessage(Connection $connection, string $message): void {
         $data = json_decode($message, true);
         if (!isset($data['event']) || !isset($data['payload'])) {
             return;
         }
 
         $request = $connection->getHandshakeRequest();
-
         $path = $request->getUri()->getPath();
         $event = $data['event'];
 
-        if (!isset($this->routes['events'][$event][$path])) {
+        $handlers = $this->router->getHandlers($event, $path);
+        if (!$handlers) {
             return;
         }
 
-
-        [$handler, $method] = $this->routes['events'][$event][$path];
+        [$handler, $method] = $handlers;
         if (class_exists($handler)) {
             $instance = new $handler();
             if (method_exists($instance, $method)) {
-                // Pass server instance along with connection and payload
                 $instance->$method($this->server, $connection, $data['payload']);
             }
         }
     }
 
-    public function routeLoader($routes) {
-        $this->routes = $routes->getRoutes();
+    public function routeLoader(Router $routes): void {
+        $this->router = $routes;
     }
 }

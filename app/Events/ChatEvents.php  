@@ -1,8 +1,0 @@
-<?php
-namespace Events;
-
-class ChatEvents {
-    const MESSAGE_SENT = 'message.sent';
-    const USER_JOINED = 'user.joined';
-    const USER_LEFT = 'user.left';
-}

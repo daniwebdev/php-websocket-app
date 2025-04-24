@@ -1,18 +1,17 @@
 <?php
 
 use App\Handlers\ChatHandler;
-use IOC\Websocket\Route;
+use IOC\Websocket\Router\Router;
 
 include __DIR__ . '/vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
-// Load environment variables
 
 // Initialize the WebSocket server
 $websocket = new IOC\Websocket\Websocket(8123);
 
-$routes = new Route();
+$routes = new Router();
 
 $routes->onConnect('/chat', [ChatHandler::class, 'onConnect']);
 $routes->add('/chat', 'chat.message', [ChatHandler::class, 'onMessage']);
