@@ -1,0 +1,32 @@
+<?php
+
+# load bootstrap
+require_once __DIR__ . '/bootstrap.php';
+
+use IOC\WebSocket\Websocket;
+use WebSocket\Connection;
+use WebSocket\Server;
+use WebSocket\Middleware\CloseHandler;
+use WebSocket\Middleware\PingResponder;
+use WebSocket\Middleware\MessageHandler;
+
+$server = new Server(8123);
+
+$server
+    ->addMiddleware(new CloseHandler())
+    ->addMiddleware(new PingResponder())
+    ->addMiddleware(new MessageHandler())
+    
+    ->onText(function (Server $server, Connection $connection, string $message) {
+        // Handle incoming text messages
+        echo "Received message: $message\n";
+        // Here you can trigger events or handle messages as needed
+    })
+    ->onBinary(function (Server $server, Connection $connection, string $data) {
+        // Handle incoming binary messages
+        echo "Received binary data: " . bin2hex($data) . "\n";
+    })
+    ->onHandshake(function (Server $server, Connection $connection) {
+        echo "New connection established: {$connection->getRemoteName()}\n";
+    })
+    ->start();
