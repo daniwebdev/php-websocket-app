@@ -24,8 +24,8 @@
     },
     "autoload": {
         "psr-4": {
-            "IOC\\Websocket\\": "core/",
-            "App\\": "src/"
+            "IOC\\Websocket\\": "core/src",
+            "App\\": "app/"
         }
     },
     "minimum-stability": "stable",

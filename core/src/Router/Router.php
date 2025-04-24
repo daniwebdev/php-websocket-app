@@ -1,8 +1,8 @@
 <?php
 
-namespace IOC\Websocket;
+namespace IOC\Websocket\Router;
 
-class Route {
+class Router {
     private $routes = [];
 
     public function onConnect(string $path, array $handler) {

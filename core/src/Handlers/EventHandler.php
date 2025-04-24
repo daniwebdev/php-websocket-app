@@ -1,6 +1,6 @@
 <?php
 
-namespace IOC\Websocket;
+namespace IOC\Websocket\Handlers;
 
 class EventHandler {
     protected $events = [];
