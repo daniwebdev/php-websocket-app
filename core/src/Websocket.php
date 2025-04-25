@@ -5,16 +5,20 @@ use WebSocket\Connection;
 use WebSocket\Server;
 use IOC\Websocket\Handlers\EventHandler;
 use IOC\Websocket\Router\Router;
+use WebSocket\Message\Text;
 
 class Websocket {
     private Server $server;
     private EventHandler $eventHandler;
     private Router $router;
 
+    private $port = 80;
+
     public function __construct(int $port=80) {
         $this->server = new Server($port);
         $this->eventHandler = new EventHandler();
         $this->router = new Router();
+        $this->port = $port;
     }
 
     public function start(): void {
@@ -29,13 +33,16 @@ class Websocket {
             }
         });
 
-        $this->server->onText(function ($server, $connection, $message) {
+        $this->server->onText(function ($server, $connection, Text $message) {
+            // echo "Received message: {$message} from {$connection->getRemoteName()}\n";
             $this->handleMessage($connection, $message);
         });
 
         $this->server->onClose(function ($server, $connection) {
             echo "Connection closed: {$connection->getRemoteName()}\n";
         });
+
+        echo "WebSocket server started on port {$this->port}\n";
 
         $this->server->start();
     }
@@ -56,11 +63,14 @@ class Websocket {
         return false;
     }
 
-    private function handleMessage(Connection $connection, string $message): void {
-        $data = json_decode($message, true);
+    private function handleMessage(Connection $connection, Text $message): void {
+        $data = json_decode($message->getContent(), true) ?? $message;
+
+
         if (!isset($data['event']) || !isset($data['payload'])) {
             return;
         }
+        print_r($data);
 
         $request = $connection->getHandshakeRequest();
         $path = $request->getUri()->getPath();

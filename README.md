@@ -51,6 +51,15 @@ To start the WebSocket server, run the following command:
 php server.php
 ```
 
+## Client Data Format
+
+```json
+{
+   "event": "chat.message",
+   "payload": "hi"
+}
+```
+
 ## Features
 - Real-time chat functionality
 - Event-driven architecture for handling various events
