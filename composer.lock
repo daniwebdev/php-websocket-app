@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9eeb45b4546cd93afeec47764c051fe",
+    "content-hash": "4bb23f01ede16be6ca278f3ac2a53307",
     "packages": [
         {
             "name": "brick/math",
@@ -849,6 +849,38 @@
                 }
             ],
             "time": "2025-03-27T12:57:33+00:00"
+        },
+        {
+            "name": "phocket/framework",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "./packages/phocket-framework",
+                "reference": "5279a45fd644dd8b6e67dbf3713d86decf8930a7"
+            },
+            "require": {
+                "phrity/websocket": "^3.4",
+                "vlucas/phpdotenv": "^5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Phocket\\Framework\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "daniwebdev",
+                    "email": "dani.webdev@gmail.com"
+                }
+            ],
+            "description": "The Phocket Framework",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "phpoption/phpoption",
@@ -5678,7 +5710,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "phocket/framework": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {},

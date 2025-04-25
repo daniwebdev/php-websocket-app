@@ -3,7 +3,7 @@
 # load bootstrap
 require_once __DIR__ . '/bootstrap.php';
 
-use IOC\WebSocket\Websocket;
+use Phocket\Framework\Websocket;
 use WebSocket\Connection;
 use WebSocket\Server;
 use WebSocket\Middleware\CloseHandler;

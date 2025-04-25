@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use IOC\WebSocket\Websocket;
+use Phocket\Framework\Websocket;
 
 class WebsocketTest extends TestCase
 {

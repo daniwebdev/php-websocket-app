@@ -5,7 +5,7 @@ namespace App\Handlers;
 use WebSocket\Connection;
 use WebSocket\Server;
 use WebSocket\Message\Text;
-use IOC\Websocket\Contracts\HandlerInterface;
+use Phocket\Framework\Contracts\HandlerInterface;
 
 class ChatHandler implements HandlerInterface
 {
